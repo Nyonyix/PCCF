@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+import argparse
+import io
+
+p = argparse.ArgumentParser(prog="pkg-config to file", description="Outputs and formats pkg-config to file")
+p.add_argument("input_str", default=False, nargs='?', help="string input")
+p.add_argument("-o", "--file_out", required=True, help="File for input", type=argparse.FileType('a'))
+p.add_argument("-i", "--file_in", required=False, help="File for input", type=argparse.FileType('r'))
+arg_all = p.parse_args()
+if arg_all.input_str == False and arg_all.file_in == None:
+    p.error("An input file must be given if there is no input string.")
+file_in = arg_all.file_in
+file_out = arg_all.file_out
+
+try:
+    f_str = file_in.read()
+    file_in.close()
+    f_str = f_str + ' ' + arg_all.input_str
+except Exception:
+    f_str = arg_all.input_str
+
+out_str = ""
+for char in f_str:
+    if char == ' ':
+        out_str += '\n'
+    else:
+        out_str += char
+
+file_out.write(out_str)
+file_out.close()
+
+print("Program Complete")
